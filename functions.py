@@ -1,4 +1,5 @@
-FILEPATH = "tasks_item.txt"
+FILEPATH = "tasks.txt"
+
 
 def get_tasks(filepath=FILEPATH):
     """ Read a text file and return the list of tasks. """
