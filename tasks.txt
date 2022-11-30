@@ -4,3 +4,4 @@ buy a camera
 Make food
 Clean Kitchen
 add some code
+Master Python
