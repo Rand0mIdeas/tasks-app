@@ -1,9 +1,13 @@
+import time
 import functions
 import PySimpleGUI as sg
 
+sg.theme("DarkBlue4")
+
+clock = sg.Text("", key="clock")
 label = sg.Text("Type in a task")
 input_box = sg.InputText(tooltip="Enter a Task")
-add_button = sg.Button("Add")
+add_button = sg.Button("Add", size=10)
 list_box = sg.Listbox(values=functions.get_tasks(), key="tasks",
                       enable_events=True, size=[45, 10])
 edit_button = sg.Button("Edit")
@@ -11,16 +15,17 @@ complete_button = sg.Button("Complete")
 exit_button = sg.Button("Exit")
 
 window = sg.Window("My Tasks App",
-                   layout=[[label],
+                   layout=[[clock],
+                           [label],
                            [input_box, add_button],
                            [list_box, edit_button, complete_button],
                            [exit_button]],
                    font=("Helvetica", 12))
 
 while True:
-    event, values = window.read()
-    print(event)
-    print(values)
+    event, values = window.read(timeout=200)
+    window["clock"].update(value=time.strftime("%d %b %Y %H:%M:%S"))
+
     match event:
         case "Add":
             tasks = functions.get_tasks()
@@ -30,22 +35,28 @@ while True:
             window['tasks'].update(values=tasks)
 
         case "Edit":
-            task_to_edit = values['tasks'][0]
-            new_task = values['task']
+            try:
+                task_to_edit = values['tasks'][0]
+                new_task = values['task']
 
-            tasks = functions.get_tasks()
-            index = tasks.index(task_to_edit)
-            tasks[index] = new_task
-            functions.write_tasks(tasks)
-            window['tasks'].update(values=tasks)
+                tasks = functions.get_tasks()
+                index = tasks.index(task_to_edit)
+                tasks[index] = new_task
+                functions.write_tasks(tasks)
+                window['tasks'].update(values=tasks)
+            except IndexError:
+                sg.popup("Please select a task task to edit", font=("Helvetica", 10))
 
         case "Complete":
-            task_to_complete = values['tasks'][0]
-            tasks = functions.get_tasks()
-            tasks.remove(task_to_complete)
-            functions.write_tasks()
-            window['taksks'].update(values=tasks)
-            window[task].update(value='')
+            try:
+                task_to_complete = values['tasks'][0]
+                tasks = functions.get_tasks()
+                tasks.remove(task_to_complete)
+                functions.write_tasks()
+                window['taksks'].update(values=tasks)
+                window[task].update(value='')
+            except:
+                sg.popup("Please select a task task to complete", font=("Helvetica", 10))
 
         case "Exit":
             break
