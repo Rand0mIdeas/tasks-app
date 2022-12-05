@@ -1,29 +1,35 @@
 import time
 import functions
 import PySimpleGUI as sg
+import os
+
+if not os.path.exists("tasks.txt"):
+    with open("tasks.txt", "w") as file:
+        pass
 
 sg.theme("DarkBlue4")
 
-clock = sg.Text("", key="clock")
-label = sg.Text("Type in a task")
-input_box = sg.InputText(tooltip="Enter a Task")
-add_button = sg.Button("Add", size=10)
+clock = sg.Text('', key="clock")
+label = sg.Text("Enter a task:")
+input_box = sg.InputText(tooltip="Enter a Task:", key='task')
+add_button = sg.Button("Add", size=10, tooltip="Add Task")
 list_box = sg.Listbox(values=functions.get_tasks(), key="tasks",
-                      enable_events=True, size=[45, 10])
+                      enable_events=True, size=[46, 10])
 edit_button = sg.Button("Edit")
-complete_button = sg.Button("Complete")
+complete_button = sg.Button(image_source="complete.png", tooltip="Completes selected task", key="Complete")
 exit_button = sg.Button("Exit")
 
 window = sg.Window("My Tasks App",
                    layout=[[clock],
                            [label],
                            [input_box, add_button],
-                           [list_box, edit_button, complete_button],
+                           [list_box, edit_button],
+                           [complete_button],
                            [exit_button]],
                    font=("Helvetica", 12))
 
 while True:
-    event, values = window.read(timeout=200)
+    event, values = window.read(timeout=1000)
     window["clock"].update(value=time.strftime("%d %b %Y %H:%M:%S"))
 
     match event:
@@ -52,11 +58,11 @@ while True:
                 task_to_complete = values['tasks'][0]
                 tasks = functions.get_tasks()
                 tasks.remove(task_to_complete)
-                functions.write_tasks()
-                window['taksks'].update(values=tasks)
-                window[task].update(value='')
-            except:
-                sg.popup("Please select a task task to complete", font=("Helvetica", 10))
+                functions.write_tasks(tasks)
+                window['tasks'].update(values=tasks)
+                window['task'].update(value='')
+            except IndexError:
+                sg.popup("Please select a task to complete", font=("Helvetica", 10))
 
         case "Exit":
             break
