@@ -12,8 +12,13 @@ def add_task():
 st.title("My Tasks App")
 st.subheader("My Task to Complete.")
 
-for task in tasks:
-    st.checkbox(task)
+for index, task in enumerate(tasks):
+    checkbox = st.checkbox(task, key=task)
+    if checkbox:
+        tasks.pop(index)
+        functions.write_tasks(tasks)
+        del st.session_state[task]
+        st.experimental_rerun()
 
 st.text_input(label="", placeholder="Enter a Task",
               on_change=add_task, key="new_task")
