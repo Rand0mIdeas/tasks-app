@@ -1,10 +1,10 @@
 import time
-import functions
+from backend import functions
 import PySimpleGUI as sg
 import os
 
-if not os.path.exists("tasks.txt"):
-    with open("tasks.txt", "w") as file:
+if not os.path.exists("../tasks.txt"):
+    with open("../tasks.txt", "w") as file:
         pass
 
 sg.theme("DarkBlue4")
